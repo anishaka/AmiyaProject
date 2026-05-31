@@ -1,0 +1,25 @@
+name: Manual Dummy Build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  dummy-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Print Message
+        run: |
+          echo "Starting Dummy Build..."
+          echo "Build Successful"
+
+      - name: Create Dummy Artifact
+        run: |
+          mkdir output
+          echo "Hello GitHub Actions" > output/build.txt
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dummy-artifact
+          path: output/build.txt
