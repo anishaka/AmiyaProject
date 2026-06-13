@@ -3,7 +3,7 @@ name: Dummy PR Build
 on:
   pull_request:
     branches:
-      - main
+      - master
       - develop
       - dummy-pr-test
     types:
