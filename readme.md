@@ -60,3 +60,4 @@ Running `java -jar target/my-app-1.0-SNAPSHOT.jar` requires http://maven.apache.
 Testing PR workflow trigger
 Testing GitHub Actions PR workflow1
 Testing GitHub Actions PR workflow2
+Testing GitHub Actions PR workflow3
