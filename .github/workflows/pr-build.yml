@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - develop
+      - dummy-pr-test
     types:
       - opened
       - synchronize
