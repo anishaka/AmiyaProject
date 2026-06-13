@@ -1,0 +1,38 @@
+name: Dummy PR Build
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+jobs:
+  dummy-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Display PR Information
+        run: |
+          echo "PR Number: ${{ github.event.pull_request.number }}"
+          echo "PR Title: ${{ github.event.pull_request.title }}"
+          echo "Source Branch: ${{ github.head_ref }}"
+          echo "Target Branch: ${{ github.base_ref }}"
+
+      - name: Dummy Build Step
+        run: |
+          echo "Starting build..."
+          sleep 10
+          echo "Build completed successfully"
+
+      - name: Dummy Test Step
+        run: |
+          echo "Running tests..."
+          sleep 5
+          echo "All tests passed"
