@@ -1,0 +1,57 @@
+name: Continuous Build Status Tracker
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: write # Crucial permission to let the workflow commit changes back to the repo
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Add your custom build/test steps here
+      - name: Run Build or Tests
+        run: |
+          echo "Running your CI build process..."
+          # Simulating a successful build step
+          echo "BUILD_STATUS=Success" >> $GITHUB_ENV
+
+      - name: Update and Commit Build Status Table
+        if: always()
+        run: |
+          # 1. Determine status based on previous steps
+          STATUS="${{ env.BUILD_STATUS }}"
+          if [ -z "$STATUS" ]; then
+            STATUS="Failed"
+          fi
+          
+          # 2. Check if the file already exists. If not, create it with headers.
+          STATUS_FILE="buildstatus.md"
+          if [ ! -f "$STATUS_FILE" ]; then
+            echo "### Continuous CI Build Log" > "$STATUS_FILE"
+            echo "" >> "$STATUS_FILE"
+            echo "| Pipeline Job | Status | Run ID | Timestamp (UTC) |" >> "$STATUS_FILE"
+            echo "| :--- | :---: | :---: | :--- |" >> "$STATUS_FILE"
+          fi
+          
+          # 3. Append the new row to the table
+          echo "| Build & Test | $STATUS | [${{ github.run_id }}](https://github.com{{ github.repository }}/actions/runs/${{ github.run_id }}) | $(date -u +'%Y-%m-%d %H:%M:%S') |" >> "$STATUS_FILE"
+          
+          # 4. Display the table on the current GitHub Actions UI Step Summary too
+          cat "$STATUS_FILE" >> $GITHUB_STEP_SUMMARY
+          
+          # 5. Configure Git, commit the file, and push changes back to the repository
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@://github.com"
+          git add "$STATUS_FILE"
+          git commit -m "chore: append build status for run ${{ github.run_id }} [skip ci]" || echo "No changes to commit"
+          git push
+
